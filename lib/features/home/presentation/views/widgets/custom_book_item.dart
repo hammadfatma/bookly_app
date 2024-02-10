@@ -10,7 +10,7 @@ class CustomBookImage extends StatelessWidget {
       child: Container(
         height: 100,
         width: 50,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             fit: BoxFit.fill,
             image: NetworkImage(
