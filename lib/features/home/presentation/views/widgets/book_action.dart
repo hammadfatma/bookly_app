@@ -26,7 +26,7 @@ class BooksAction extends StatelessWidget {
           Expanded(
             child: CustomButton(
               onPressed: () async {
-                launchCustomUrl(context, bookModel.volumeInfo.previewLink);
+                launchCustomUrl(context, bookModel.volumeInfo?.previewLink);
               },
               text: getText(bookModel),
               fontSize: 16,
@@ -44,7 +44,7 @@ class BooksAction extends StatelessWidget {
   }
 
   String getText(BookModel bookModel) {
-    if (bookModel.volumeInfo.previewLink == null) {
+    if (bookModel.volumeInfo?.previewLink == null) {
       return 'Not Avaliable';
     } else {
       return 'Preview';

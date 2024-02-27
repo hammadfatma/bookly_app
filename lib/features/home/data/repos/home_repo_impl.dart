@@ -1,31 +1,35 @@
 import 'package:bookly_app/core/errors/failures.dart';
-import 'package:bookly_app/core/utils/api_service.dart';
+import 'package:bookly_app/features/home/data/data_sources/home_local_data_source.dart';
+import 'package:bookly_app/features/home/data/data_sources/home_remote_data_source.dart';
 import 'package:bookly_app/features/home/data/models/book_model/book_model.dart';
-import 'package:bookly_app/features/home/data/repos/home_repo.dart';
+import 'package:bookly_app/features/home/domain/entities/book_entity.dart';
+import 'package:bookly_app/features/home/domain/repos/home_repo.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 
-class HomeRepoImpl implements HomeRepo {
-  final ApiService apiService;
+class HomeRepoImpl extends HomeRepo {
+  final HomeRemoteDataSource homeRemoteDataSource;
+  final HomeLocalDataSource homeLocalDataSource;
 
-  HomeRepoImpl(this.apiService);
+  HomeRepoImpl(
+      {required this.homeRemoteDataSource, required this.homeLocalDataSource});
   @override
-  Future<Either<Failure, List<BookModel>>> fetchNewsetBooks() async {
+  Future<Either<Failure, List<BookEntity>>> fetchFeaturedBooks(
+      {int pageNumber = 0}) async {
+    List<BookEntity> booksList;
     try {
-      var data = await apiService.get(
-          endPoint:
-              'volumes?Filtering=free-ebooks&Sorting=newest &q=computer science');
-      List<BookModel> books = [];
-      for (var item in data['items']) {
-        try {
-          books.add(BookModel.fromJson(item));
-        } catch (e) {
-          books.add(BookModel.fromJson(item));
-        }
+      booksList = homeLocalDataSource.fetchFeaturedBooks(
+        pageNumber: pageNumber,
+      );
+      if (booksList.isNotEmpty) {
+        return right(booksList);
       }
-      return right(books);
+      booksList = await homeRemoteDataSource.fetchFeaturedBooks(
+        pageNumber: pageNumber,
+      );
+      return right(booksList);
     } catch (e) {
-      if (e is DioError) {
+      if (e is DioException) {
         return left(ServerFailure.fromDioError(e));
       }
       return left(ServerFailure(e.toString()));
@@ -33,17 +37,17 @@ class HomeRepoImpl implements HomeRepo {
   }
 
   @override
-  Future<Either<Failure, List<BookModel>>> fetchFeaturedBooks() async {
+  Future<Either<Failure, List<BookEntity>>> fetchNewsetBooks() async {
     try {
-      var data = await apiService.get(
-          endPoint: 'volumes?Filtering=free-ebooks&q=subject:Programming');
-      List<BookModel> books = [];
-      for (var item in data['items']) {
-        books.add(BookModel.fromJson(item));
+      List<BookEntity> books;
+      books = homeLocalDataSource.fetchNewestBooks();
+      if (books.isNotEmpty) {
+        return right(books);
       }
+      books = await homeRemoteDataSource.fetchNewestBooks();
       return right(books);
     } catch (e) {
-      if (e is DioError) {
+      if (e is DioException) {
         return left(ServerFailure.fromDioError(e));
       }
       return left(ServerFailure(e.toString()));
@@ -51,6 +55,32 @@ class HomeRepoImpl implements HomeRepo {
   }
 
   @override
+  Future<Either<Failure, List<BookModel>>> fetchSimilarBooks(
+      {required String category}) {
+    // TODO: implement fetchSimilarBooks
+    throw UnimplementedError();
+  }
+
+  /* @override
+  Future<Either<Failure, List<BookModel>>> fetchSimilarBooks(
+      {required String category}) async {
+    try {
+      List<BookModel> books;
+      books = homeLocalDataSource.fetchSimilarBooks();
+      if (books.isNotEmpty) {
+        return right(books);
+      }
+      books = await homeRemoteDataSource.fetchSimilarBooks();
+      return right(books);
+    } catch (e) {
+      if (e is DioException) {
+        return left(ServerFailure.fromDioError(e));
+      }
+      return left(ServerFailure(e.toString()));
+    }
+  }*/
+
+  /*@override
   Future<Either<Failure, List<BookModel>>> fetchSimilarBooks(
       {required String category}) async {
     try {
@@ -68,5 +98,5 @@ class HomeRepoImpl implements HomeRepo {
       }
       return left(ServerFailure(e.toString()));
     }
-  }
+  }*/
 }
