@@ -1,7 +1,6 @@
 import 'package:bookly_app/core/errors/failures.dart';
 import 'package:bookly_app/features/home/data/data_sources/home_local_data_source.dart';
 import 'package:bookly_app/features/home/data/data_sources/home_remote_data_source.dart';
-import 'package:bookly_app/features/home/data/models/book_model/book_model.dart';
 import 'package:bookly_app/features/home/domain/entities/book_entity.dart';
 import 'package:bookly_app/features/home/domain/repos/home_repo.dart';
 import 'package:dartz/dartz.dart';
@@ -60,10 +59,26 @@ class HomeRepoImpl extends HomeRepo {
   }
 
   @override
-  Future<Either<Failure, List<BookModel>>> fetchSimilarBooks(
-      {required String category}) {
-    // TODO: implement fetchSimilarBooks
-    throw UnimplementedError();
+  Future<Either<Failure, List<BookEntity>>> fetchSimilarBooks(
+      {String category = ''}) async {
+    List<BookEntity> booksSimilar;
+    try {
+      booksSimilar = homeLocalDataSource.fetchSimilarBooks(
+        category: category,
+      );
+      if (booksSimilar.isNotEmpty) {
+        return right(booksSimilar);
+      }
+      booksSimilar = await homeRemoteDataSource.fetchSimilarBooks(
+        category: category,
+      );
+      return right(booksSimilar);
+    } catch (e) {
+      if (e is DioException) {
+        return left(ServerFailure.fromDioError(e));
+      }
+      return left(ServerFailure(e.toString()));
+    }
   }
 
   /* @override
