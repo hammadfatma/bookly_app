@@ -57,7 +57,9 @@ class BookListViewItem extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        'Free',
+                        bookEntity.price != null
+                            ? "${bookEntity.price} ${bookEntity.currency}"
+                            : 'Free',
                         style: Styles.textStyle20.copyWith(
                           fontWeight: FontWeight.bold,
                         ),

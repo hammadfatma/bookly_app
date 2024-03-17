@@ -21,15 +21,19 @@ class BookEntity {
   final String? categoryName;
   @HiveField(8)
   final String? preview;
+  @HiveField(9)
+  final String? currency;
 
-  BookEntity(
-      {required this.bookId,
-      required this.image,
-      required this.title,
-      required this.authorName,
-      required this.price,
-      required this.rating,
-      required this.count,
-      required this.categoryName,
-      required this.preview});
+  BookEntity({
+    required this.bookId,
+    required this.image,
+    required this.title,
+    required this.authorName,
+    required this.price,
+    required this.rating,
+    required this.count,
+    required this.categoryName,
+    required this.preview,
+    required this.currency,
+  });
 }

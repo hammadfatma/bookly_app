@@ -12,12 +12,14 @@ class BooksAction extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
         children: [
-          const Expanded(
+          Expanded(
             child: CustomButton(
-              text: 'Free',
+              text: bookEntity.price != null
+                  ? "${bookEntity.price} ${bookEntity.currency}"
+                  : 'Free',
               backgroundColor: Colors.white,
               textColor: Colors.black,
-              borderRadius: BorderRadius.only(
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(16),
                 bottomLeft: Radius.circular(16),
               ),
