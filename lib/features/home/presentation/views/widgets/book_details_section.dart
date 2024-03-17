@@ -1,6 +1,7 @@
 import 'package:bookly_app/core/utils/styles.dart';
 import 'package:bookly_app/features/home/domain/entities/book_entity.dart';
 import 'package:bookly_app/features/home/presentation/views/widgets/book_action.dart';
+import 'package:bookly_app/features/home/presentation/views/widgets/book_payment.dart';
 import 'package:bookly_app/features/home/presentation/views/widgets/book_rating.dart';
 import 'package:bookly_app/features/home/presentation/views/widgets/custom_book_item.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,10 @@ class BookDetailsSection extends StatelessWidget {
         BooksAction(
           bookEntity: book,
         ),
+        const SizedBox(
+          height: 18,
+        ),
+        BookPayment(bookEntity: book),
       ],
     );
   }
